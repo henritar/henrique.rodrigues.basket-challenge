@@ -15,6 +15,7 @@ namespace Assets.Scripts.Runtime.Shared.Constants
         public readonly static float MaxSwipeDistance = 500f; 
         public readonly static float MinSwipeSpeed = 100f;
         public readonly static float SwipeTimeWindow = 2f;
+        public readonly static int FireballStreakThreshold = 3;
         public readonly static Vector3 BallOffset = new Vector3(0.15f, 1.6f, 0.3f);
         
         public static int GetRandomEvenOdd() 

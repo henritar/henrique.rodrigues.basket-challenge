@@ -1,7 +1,9 @@
 ﻿using Assets.Scripts.Runtime.Enums;
 using Assets.Scripts.Runtime.Shared;
+using Assets.Scripts.Runtime.Shared.Constants;
 using Assets.Scripts.Runtime.Shared.EventBus.Events;
 using Assets.Scripts.Runtime.Shared.Interfaces;
+using System;
 using UniRx;
 using UnityEngine;
 
@@ -12,11 +14,15 @@ namespace Assets.Scripts.Runtime.Managers
         private readonly IEventBus _eventBus;
         private CompositeDisposable _disposables;
         private ReactiveProperty<int> _currentScore = new();
+        private int _fireballStreak;
+        private bool _goal;
 
         private BonusTypeEnum _currentBonus = BonusTypeEnum.None;
         private ShotResultEnum _shotResult = ShotResultEnum.MissWeak;
 
         public int CurrentScore => _currentScore.Value;
+
+        private CompositeDisposable _ballDisposable;
 
         public GoalManager(IEventBus eventBus) 
         {
@@ -37,7 +43,7 @@ namespace Assets.Scripts.Runtime.Managers
                 .AddTo(_disposables);
             _eventBus.OnEvent<ShotEvent>().Subscribe(OnShotMade).AddTo(_disposables);
             _eventBus.OnEvent<UpdateBonusEvent>().Subscribe(OnNewBonus).AddTo(_disposables);
-            _eventBus.OnEvent<GameStartEvent>().Subscribe(_ => _currentScore.Value = 0).AddTo(_disposables);
+            _eventBus.OnEvent<GameStartEvent>().Subscribe(OnGameStart).AddTo(_disposables);
 
             _currentScore.Subscribe(OnUpdateScore).AddTo(_disposables);
 
@@ -46,6 +52,7 @@ namespace Assets.Scripts.Runtime.Managers
 
         private void OnGoalScored(GoalEvent goalEvent)
         {
+            _goal = true;
             int points = 0;
             if (_currentBonus != BonusTypeEnum.None && _shotResult == ShotResultEnum.BackboardBasket)
             {
@@ -56,13 +63,25 @@ namespace Assets.Scripts.Runtime.Managers
                 points = _shotResult switch
                 {
                     ShotResultEnum.PerfectShot => 3,
-                    ShotResultEnum.RingTouch or  ShotResultEnum.BackboardBasket => 2,
+                    ShotResultEnum.RingTouch or ShotResultEnum.BackboardBasket => 2,
                     _ => 0
                 };
             }
 
+            bool shouldDoubleScore = _fireballStreak >= GameConstants.FireballStreakThreshold;
+            points *= shouldDoubleScore ? 2 : 1;
             _currentScore.Value += points;
+
+            _fireballStreak += points > 0 ? 1 : 0;
+
             Debug.Log($"Goal scored! Points: {points}");
+        }
+
+        private void OnGameStart(GameStartEvent gameStartEvent)
+        {
+            _currentScore.Value = 0;
+            _fireballStreak = 0;
+            _goal = false;
         }
 
         private void OnUpdateScore(int newScore)
@@ -73,6 +92,21 @@ namespace Assets.Scripts.Runtime.Managers
         private void OnShotMade(ShotEvent shotEvent)
         {
             _shotResult = shotEvent.ShotResult;
+
+            _ballDisposable = new();
+            shotEvent.BallPresenter.OnBallReset.Subscribe(OnBallReset).AddTo(_ballDisposable);
+
+            void OnBallReset(Unit unit)
+            {
+                _ballDisposable.Dispose();
+                if (!_goal && (_shotResult == ShotResultEnum.MissWeak ||
+                                _shotResult == ShotResultEnum.MissStrong ||
+                                _shotResult == ShotResultEnum.RingTouch))
+                {
+                    _fireballStreak = 0;
+                }
+                _goal = false;
+            }
         }
 
         private void OnNewBonus(UpdateBonusEvent updateBonusEvent)
