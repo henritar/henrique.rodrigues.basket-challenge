@@ -22,6 +22,7 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
         private readonly ISwipeManager _swipeManager;
         private readonly IBackboardBonusManager _backboardBonusManager;
         private readonly ITimerManager _timerManager;
+        private readonly IGoalManager _goalManager;
 
         private CompositeDisposable _disposables;
 
@@ -29,7 +30,8 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
 
         public PlayingGameState(IPlayingInputHandler inputHandler, IEventBus eventBus,
             IBallPresenter ballPresenter, IGameplayUIPresenter gameplayUIPresenter, ITimerUIPresenter timerUIPresenter,
-            IGameplayInputManager inputManager, ISwipeManager swipeManager, IBackboardBonusManager backboardBonusManager, ITimerManager timerManager)
+            IGameplayInputManager inputManager, ISwipeManager swipeManager, IBackboardBonusManager backboardBonusManager,
+            ITimerManager timerManager, IGoalManager goalManager)
         {
             _inputHandler = inputHandler;
             _eventBus = eventBus;
@@ -40,6 +42,7 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
             _swipeManager = swipeManager;
             _backboardBonusManager = backboardBonusManager;
             _timerManager = timerManager;
+            _goalManager = goalManager;
 
             _inputHandler.BallPresenter = _ballPresenter;
         }
@@ -54,6 +57,7 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
             _timerManager.StartTimer();
             _swipeManager.ResetSwipeTracking();
             _swipeManager.ShowInputBar(true);
+            _goalManager.ShowFireballBar(true);
 
             _gameplayUIPresenter.ShowUI(true);
             _timerUIPresenter.ShowUI(true);
@@ -70,6 +74,7 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
             _timerUIPresenter.ShowUI(false);
             _gameplayUIPresenter.ShowUI(false);
             _swipeManager.ShowInputBar(false);
+            _goalManager.ShowFireballBar(false);
 
             _backboardBonusManager.StopBonusGeneration();
 

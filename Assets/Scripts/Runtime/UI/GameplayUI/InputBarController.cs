@@ -48,7 +48,7 @@ namespace Assets.Scripts.Runtime.UI.GameplayUI
             }
         }
 
-        public void EnableInputBar(bool isEnabled)
+        public void EnableBarController(bool isEnabled)
         {
             gameObject.SetActive(isEnabled);
         }

@@ -56,7 +56,7 @@ namespace Assets.Scripts.Runtime.Managers
 
         public void ShowInputBar(bool show)
         {
-            _inputBarController.EnableInputBar(show);
+            _inputBarController.EnableBarController(show);
         }
 
         public void StartSwipeTracking(IBallPresenter ballPresenter)

@@ -3,7 +3,8 @@ using Assets.Scripts.Runtime.Shared;
 using Assets.Scripts.Runtime.Shared.Constants;
 using Assets.Scripts.Runtime.Shared.EventBus.Events;
 using Assets.Scripts.Runtime.Shared.Interfaces;
-using System;
+using Assets.Scripts.Runtime.Shared.Interfaces.Data;
+using Assets.Scripts.Runtime.Shared.Interfaces.UI;
 using UniRx;
 using UnityEngine;
 
@@ -11,21 +12,27 @@ namespace Assets.Scripts.Runtime.Managers
 {
     public class GoalManager : BaseManager, IGoalManager
     {
+        private readonly IFireballData _fireballData;
+        private readonly IFireballBarController _fireballBarController;
         private readonly IEventBus _eventBus;
         private CompositeDisposable _disposables;
-        private ReactiveProperty<int> _currentScore = new();
-        private int _fireballStreak;
+        private ReactiveProperty<int> _currentScore;
+        private ReactiveProperty<int> _fireballStreak;
         private bool _goal;
 
         private BonusTypeEnum _currentBonus = BonusTypeEnum.None;
         private ShotResultEnum _shotResult = ShotResultEnum.MissWeak;
 
         public int CurrentScore => _currentScore.Value;
+        public int FireballThreshold => _fireballData.FireballThreshold;
+        public int FireballStreak => _fireballStreak.Value;
 
         private CompositeDisposable _ballDisposable;
 
-        public GoalManager(IEventBus eventBus) 
+        public GoalManager(IFireballData fireballData, IFireballBarController fireballBarController, IEventBus eventBus) 
         {
+            _fireballData = fireballData;
+            _fireballBarController = fireballBarController;
             _eventBus = eventBus;
         }
 
@@ -38,6 +45,8 @@ namespace Assets.Scripts.Runtime.Managers
             }
 
             _disposables = new();
+            _currentScore = new();
+            _fireballStreak = new();
 
             _eventBus.OnEvent<GoalEvent>().Subscribe(OnGoalScored)
                 .AddTo(_disposables);
@@ -46,8 +55,14 @@ namespace Assets.Scripts.Runtime.Managers
             _eventBus.OnEvent<GameStartEvent>().Subscribe(OnGameStart).AddTo(_disposables);
 
             _currentScore.Subscribe(OnUpdateScore).AddTo(_disposables);
+            _fireballStreak.Subscribe(OnUpdateFireballStreak).AddTo(_disposables);
 
             _isInitialized = true;
+        }
+
+        public void ShowFireballBar(bool show)
+        {
+            _fireballBarController.EnableBarController(show);
         }
 
         private void OnGoalScored(GoalEvent goalEvent)
@@ -68,11 +83,11 @@ namespace Assets.Scripts.Runtime.Managers
                 };
             }
 
-            bool shouldDoubleScore = _fireballStreak >= GameConstants.FireballStreakThreshold;
+            bool shouldDoubleScore = _fireballStreak.Value >= GameConstants.FireballStreakThreshold;
             points *= shouldDoubleScore ? 2 : 1;
             _currentScore.Value += points;
 
-            _fireballStreak += points > 0 ? 1 : 0;
+            _fireballStreak.Value += points > 0 ? 1 : 0;
 
             Debug.Log($"Goal scored! Points: {points}");
         }
@@ -80,13 +95,18 @@ namespace Assets.Scripts.Runtime.Managers
         private void OnGameStart(GameStartEvent gameStartEvent)
         {
             _currentScore.Value = 0;
-            _fireballStreak = 0;
+            _fireballStreak.Value = 0;
             _goal = false;
         }
 
         private void OnUpdateScore(int newScore)
         {
             _eventBus.Publish(new UpdateScoreEvent(newScore));
+        }
+
+        private void OnUpdateFireballStreak(int newFireballStreak)
+        {
+            _fireballBarController.StacksFiller(newFireballStreak, FireballThreshold);
         }
 
         private void OnShotMade(ShotEvent shotEvent)
@@ -103,7 +123,7 @@ namespace Assets.Scripts.Runtime.Managers
                                 _shotResult == ShotResultEnum.MissStrong ||
                                 _shotResult == ShotResultEnum.RingTouch))
                 {
-                    _fireballStreak = 0;
+                    _fireballStreak.Value = 0;
                 }
                 _goal = false;
             }
