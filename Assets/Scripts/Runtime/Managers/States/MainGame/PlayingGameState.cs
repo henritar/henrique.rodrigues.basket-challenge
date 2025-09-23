@@ -2,6 +2,7 @@
 using Assets.Scripts.Runtime.Shared;
 using Assets.Scripts.Runtime.Shared.EventBus.Events;
 using Assets.Scripts.Runtime.Shared.Interfaces;
+using Assets.Scripts.Runtime.Shared.Interfaces.Factories.Player;
 using Assets.Scripts.Runtime.Shared.Interfaces.InputSystem.Gameplay;
 using Assets.Scripts.Runtime.Shared.Interfaces.Interactables;
 using Assets.Scripts.Runtime.Shared.Interfaces.UI;
@@ -15,7 +16,6 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
     {
         private readonly IPlayingInputHandler _inputHandler;
         private readonly IEventBus _eventBus;
-        private readonly IBallPresenter _ballPresenter;
         private readonly IGameplayUIPresenter _gameplayUIPresenter;
         private readonly ITimerUIPresenter _timerUIPresenter;
         private readonly IGameplayInputManager _inputManager;
@@ -23,19 +23,19 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
         private readonly IBackboardBonusManager _backboardBonusManager;
         private readonly ITimerManager _timerManager;
         private readonly IGoalManager _goalManager;
+        private readonly IPlayerFactory _playerFactory;
 
         private CompositeDisposable _disposables;
 
         protected override GameStatesEnum GameState => GameStatesEnum.Playing;
 
         public PlayingGameState(IPlayingInputHandler inputHandler, IEventBus eventBus,
-            IBallPresenter ballPresenter, IGameplayUIPresenter gameplayUIPresenter, ITimerUIPresenter timerUIPresenter,
+            IGameplayUIPresenter gameplayUIPresenter, ITimerUIPresenter timerUIPresenter,
             IGameplayInputManager inputManager, ISwipeManager swipeManager, IBackboardBonusManager backboardBonusManager,
-            ITimerManager timerManager, IGoalManager goalManager)
+            ITimerManager timerManager, IGoalManager goalManager, IPlayerFactory playerFactory)
         {
             _inputHandler = inputHandler;
             _eventBus = eventBus;
-            _ballPresenter = ballPresenter;
             _gameplayUIPresenter = gameplayUIPresenter;
             _timerUIPresenter = timerUIPresenter;
             _inputManager = inputManager;
@@ -43,8 +43,7 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
             _backboardBonusManager = backboardBonusManager;
             _timerManager = timerManager;
             _goalManager = goalManager;
-
-            _inputHandler.BallPresenter = _ballPresenter;
+            _playerFactory = playerFactory;
         }
 
         protected override void OnEnterState()
@@ -103,12 +102,16 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
 
         private void SubscribeToEvents()
         {
+            var playerPresenter = _playerFactory.Create(PlayerTypeEnum.Player);
+            IBallPresenter ballPresenter = playerPresenter.GetBall();
+
+            _inputHandler.BallPresenter = ballPresenter;
             _inputHandler.OnHoldClick += _swipeManager.StartSwipeTracking;
             _inputHandler.OnReleaseClick += _swipeManager.EndSwipeTracking;
 
             _disposables = new CompositeDisposable();
 
-            _ballPresenter.OnBallReset.Subscribe(_ => _swipeManager.ResetSwipeTracking()).AddTo(_disposables);
+            ballPresenter.OnBallReset.Subscribe(_ => _swipeManager.ResetSwipeTracking()).AddTo(_disposables);
             _timerManager.Timer.ObserveEveryValueChanged(t => t.Value).Subscribe(OnTimerChanged).AddTo(_disposables);
         }
 

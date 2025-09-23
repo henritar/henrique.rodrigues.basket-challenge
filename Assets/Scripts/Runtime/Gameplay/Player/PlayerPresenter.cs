@@ -12,6 +12,7 @@ namespace Assets.Scripts.Runtime.Gameplay.Player
 
         public PlayerPresenter(IPlayerModel model, IPlayerView view) : base(model, view)
         {
+            Initialize();
         }
 
         public IBallPresenter GetBall() => Model.BallPresenter;

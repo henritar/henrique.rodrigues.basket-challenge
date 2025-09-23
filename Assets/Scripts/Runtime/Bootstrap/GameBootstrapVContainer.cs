@@ -1,3 +1,5 @@
+using Assets.Scripts.Runtime.Camera;
+using Assets.Scripts.Runtime.Factories;
 using Assets.Scripts.Runtime.Gameplay.Ball;
 using Assets.Scripts.Runtime.Gameplay.Interactables;
 using Assets.Scripts.Runtime.Gameplay.Player;
@@ -9,6 +11,7 @@ using Assets.Scripts.Runtime.ScriptableObjects.InputSystem;
 using Assets.Scripts.Runtime.Shared.EventBus;
 using Assets.Scripts.Runtime.Shared.Interfaces;
 using Assets.Scripts.Runtime.Shared.Interfaces.Data;
+using Assets.Scripts.Runtime.Shared.Interfaces.Factories.Player;
 using Assets.Scripts.Runtime.Shared.Interfaces.InputSystem;
 using Assets.Scripts.Runtime.Shared.Interfaces.InputSystem.Gameplay;
 using Assets.Scripts.Runtime.Shared.Interfaces.Interactables;
@@ -34,6 +37,7 @@ namespace Assets.Scripts.Runtime.Bootstrap
         [SerializeField] private SO_TimerData _timerData;
         [SerializeField] private SO_ShotResultData _shotResultData;
         [SerializeField] private SO_FireballData _fireballData;
+        [SerializeField] private PlayerCreationalData[] _playerCreationDataArray;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -52,6 +56,12 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.RegisterInstance(_shotResultData).As<IShotResultData>();
                 builder.RegisterInstance(_fireballData).As<IFireballData>();
 
+            // Camera
+                builder.RegisterComponentInHierarchy<CameraController>().As<ICameraController>();
+
+            // Creational Data
+                builder.RegisterInstance(_playerCreationDataArray);
+
             // Managers
                 builder.Register<GameManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<GoalManager>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -62,6 +72,9 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.Register<BackboardBonusManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<GameplayInputManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<GameStatesManager>(Lifetime.Singleton).As<IGameStateManager>();
+
+            // Factories
+                builder.Register<PlayerFactory>(Lifetime.Singleton).As<IPlayerFactory>();
 
             // Event Bus
                 builder.Register<EventBus>(Lifetime.Singleton).As<IEventBus>();
@@ -77,16 +90,6 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.RegisterComponentInHierarchy<BasketPoint>().As<IBasketPoint>();
                 builder.RegisterComponentInHierarchy<BackboardPoint>().As<IBackboardPoint>();
                 builder.RegisterComponentInHierarchy<BackboardColliderDetector>().As<IBackboardColliderDetector>();
-
-            // Ball
-                builder.RegisterComponentInHierarchy<BallView>().As<IBallView>();
-                builder.Register<BallModel>(Lifetime.Singleton).As<IBallModel>();
-                builder.Register<BallPresenter>(Lifetime.Singleton).AsImplementedInterfaces();
-
-            // Player
-                builder.RegisterComponentInHierarchy<PlayerView>().As<IPlayerView>();
-                builder.Register<PlayerModel>(Lifetime.Singleton).As<IPlayerModel>();
-                builder.Register<PlayerPresenter>(Lifetime.Singleton).AsImplementedInterfaces();
 
             // UI
                 builder.RegisterComponentInHierarchy<MainMenuView>().As<IMainMenuView>();

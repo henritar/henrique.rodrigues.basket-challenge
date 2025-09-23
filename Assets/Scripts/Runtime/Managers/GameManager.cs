@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Runtime.Enums;
 using Assets.Scripts.Runtime.Shared;
 using Assets.Scripts.Runtime.Shared.Interfaces;
+using Assets.Scripts.Runtime.Shared.Interfaces.Factories.Player;
 using Assets.Scripts.Runtime.Shared.Interfaces.StateMachine;
 using UnityEngine;
 
@@ -8,11 +9,15 @@ namespace Assets.Scripts.Runtime.Managers
 {
     public class GameManager : BaseManager, IGameManager
     {
-        private IGameStateManager _gameStatesManager;
+        private readonly IGameStateManager _gameStatesManager;
+        private readonly ICameraController _cameraController;
+        private readonly IPlayerFactory _playerFactory;
 
-        public GameManager(IGameStateManager gameStateManager)
+        public GameManager(IGameStateManager gameStateManager, ICameraController cameraController, IPlayerFactory playerFactory)
         {
             _gameStatesManager = gameStateManager;
+            _cameraController = cameraController;
+            _playerFactory = playerFactory;
         }
 
         public override void Initialize()
@@ -31,7 +36,8 @@ namespace Assets.Scripts.Runtime.Managers
 
         private void InitializeGame()
         {
-            Debug.Log("Initializing game...");
+            var player = _playerFactory.Create(PlayerTypeEnum.Player);
+            _cameraController.SetCameraFollowTarget(player.GetBall().BallTransform);
             _gameStatesManager.ChangeState(GameStatesEnum.MainMenu);
         }
 
