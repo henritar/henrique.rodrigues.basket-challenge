@@ -82,6 +82,7 @@ namespace Assets.Scripts.Runtime.Managers
         {
             Vector2 lastPosition = _startPosition;
             float lastMoveTime = _startTime;
+            float maxPowerReached = 0f;
 
             while (_isTracking && !ct.IsCancellationRequested)
             {
@@ -92,29 +93,35 @@ namespace Assets.Scripts.Runtime.Managers
                 float currentTime = Time.time;
                 float deltaTime = currentTime - lastMoveTime;
 
-                // Calcular poder atual em tempo real
-                Vector2 totalDelta = _currentPosition - _startPosition;
-                float upwardDistance = Mathf.Max(0, totalDelta.y);
-                float currentPower = Mathf.Clamp01(upwardDistance / GameConstants.MaxSwipeDistance) * 100f;
-
-                // Atualizar barra de força
-                _inputBarController.SetPower(currentPower);
-
-                float currentSpeed = deltaMove.magnitude / deltaTime;
-                bool isMovingUp = deltaMove.y > 0;
-                bool isMovingFastEnough = currentSpeed >= GameConstants.MinSwipeSpeed;
-                bool withinTimeWindow = (currentTime - _startTime) <= GameConstants.SwipeTimeWindow;
-
-                if (!withinTimeWindow || (!isMovingUp && deltaMove.magnitude > 5f) ||
-                    (deltaTime > 0.1f && !isMovingFastEnough))
+                // Verificar se deve parar
+                if (ShouldStopTracking(deltaMove, deltaTime, currentTime))
                 {
                     CalculateAndReturnPower();
                     break;
                 }
 
+                Vector2 totalDelta = _currentPosition - _startPosition;
+                float upwardDistance = Mathf.Max(0, totalDelta.y);
+                float currentPower = Mathf.Clamp01(upwardDistance / GameConstants.MaxSwipeDistance) * 100f;
+
+                maxPowerReached = Mathf.Max(maxPowerReached, currentPower);
+                _inputBarController.SetPower(maxPowerReached);
+
                 lastPosition = _currentPosition;
                 lastMoveTime = currentTime;
             }
+        }
+
+        private bool ShouldStopTracking(Vector2 deltaMove, float deltaTime, float currentTime)
+        {
+            float currentSpeed = deltaMove.magnitude / deltaTime;
+            bool isMovingUp = deltaMove.y > 0;
+            bool isMovingFastEnough = currentSpeed >= GameConstants.MinSwipeSpeed;
+            bool withinTimeWindow = (currentTime - _startTime) <= GameConstants.SwipeTimeWindow;
+
+            return !withinTimeWindow ||
+                   (!isMovingUp && deltaMove.magnitude > 5f) ||
+                   (deltaTime > 0.1f && !isMovingFastEnough);
         }
 
         public void EndSwipeTracking()

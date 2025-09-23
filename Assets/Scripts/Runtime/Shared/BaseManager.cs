@@ -60,6 +60,5 @@ namespace Assets.Scripts.Runtime.Shared
         {
 
         }
-
     }
 }

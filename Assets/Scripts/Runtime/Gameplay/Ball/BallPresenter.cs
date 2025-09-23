@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Runtime.Enums;
 using Assets.Scripts.Runtime.Shared;
+using Assets.Scripts.Runtime.Shared.Constants;
 using Assets.Scripts.Runtime.Shared.Interfaces.Interactables;
 using System;
 using UniRx;
@@ -33,8 +34,9 @@ namespace Assets.Scripts.Runtime.Gameplay.Ball
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.useGravity = true;
-            rb.velocity = velocity;
             rb.isKinematic = false;
+            rb.velocity = velocity;
+            rb.angularVelocity = CalculateAngularVelocity(velocity);
         }
 
         public void ResetBall()
@@ -47,6 +49,20 @@ namespace Assets.Scripts.Runtime.Gameplay.Ball
             ResetBallPosition();
 
             _onBallReset.OnNext(Unit.Default);
+        }
+
+        private Vector3 CalculateAngularVelocity(Vector3 velocity)
+        {
+            Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+            float speed = horizontalVelocity.magnitude;
+
+            if (speed < 0.1f) return Vector3.zero;
+
+            Vector3 rotationAxis = Vector3.Cross(Vector3.up, horizontalVelocity.normalized);
+            float angularSpeed = Mathf.Min(speed * GameConstants.BallRotationMultiplier,
+                                           GameConstants.MaxAngularVelocity);
+
+            return rotationAxis * angularSpeed;
         }
 
         private void ResetBallPosition()

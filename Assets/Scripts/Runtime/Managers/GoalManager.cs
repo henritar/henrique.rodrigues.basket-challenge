@@ -94,7 +94,7 @@ namespace Assets.Scripts.Runtime.Managers
             if (goalEvent.PlayerType == PlayerTypeEnum.Player)
             {
                 _goal = true;
-                bool shouldDoubleScore = _fireballStreak.Value >= GameConstants.FireballStreakThreshold;
+                bool shouldDoubleScore = _fireballStreak.Value >= _fireballData.FireballThreshold;
                 points *= shouldDoubleScore ? 2 : 1;
                 _playerCurrentScore.Value += points;
                 _fireballStreak.Value += points > 0 ? 1 : 0;

@@ -20,7 +20,7 @@ MonoBehaviour:
     MaxPower: 0.75
     Result: 0
   - MinPower: 0.75
-    MaxPower: 0.8
+    MaxPower: 0.85
     Result: 2
   - MinPower: 0.85
     MaxPower: 0.95
