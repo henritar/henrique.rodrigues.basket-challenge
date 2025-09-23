@@ -12,13 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b793ebf66ea8e42a5c8a91b2a756dc, type: 3}
   m_Name: DefaultShootingPositionData
   m_EditorClassIdentifier: 
-  shootingPositionArray:
+  _playerShootingPositionArray:
   - {x: 0, y: 0, z: -4}
-  - {x: -2.5, y: 0, z: -4}
-  - {x: 2.5, y: 0, z: -4}
+  - {x: -4, y: 0, z: -4}
+  - {x: 4, y: 0, z: -4}
   - {x: 0, y: 0, z: -8}
-  - {x: -2.5, y: 0, z: -8}
-  - {x: 2.5, y: 0, z: -8}
+  - {x: -4, y: 0, z: -8}
+  - {x: 4, y: 0, z: -8}
   - {x: 0, y: 0, z: -16}
-  - {x: 4, y: 0, z: -16}
-  - {x: 4, y: 0, z: -16}
+  - {x: -4, y: 0, z: -8}
+  - {x: 4, y: 0, z: -8}
+  _npcShootingPositionArray:
+  - {x: 2, y: 0, z: -4}
+  - {x: -2, y: 0, z: -4}
+  - {x: 2, y: 0, z: -4}
+  - {x: 2, y: 0, z: -8}
+  - {x: -2, y: 0, z: -8}
+  - {x: 2, y: 0, z: -8}
+  - {x: 2, y: 0, z: -16}
+  - {x: -2, y: 0, z: -8}
+  - {x: 2, y: 0, z: -8}

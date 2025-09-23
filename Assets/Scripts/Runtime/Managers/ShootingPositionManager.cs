@@ -8,6 +8,7 @@ using Assets.Scripts.Runtime.Shared.Interfaces.Interactables;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UniRx;
 using UnityEngine;
 using VContainer.Unity;
@@ -47,6 +48,7 @@ namespace Assets.Scripts.Runtime.Managers
                 var pType = (PlayerTypeEnum)playerType;
                 var player = _playerFactory.Create(pType);
                 _playerPresenters.TryAdd(pType, player);
+                MoveToRandomShootingPosition(pType, 0);
             }
 
             _eventBus.OnEvent<GoalEvent>().Subscribe(DelayedMoveToPosition).AddTo(_disposables);
@@ -56,16 +58,31 @@ namespace Assets.Scripts.Runtime.Managers
 
         public void MoveToRandomShootingPosition(PlayerTypeEnum playerType)
         {
+            int randomIndex = UnityEngine.Random.Range(0, _shootingData.PlayerShootingPositions.Length);
+            MoveToRandomShootingPosition(playerType, randomIndex);
+        }
+
+        private void MoveToRandomShootingPosition(PlayerTypeEnum playerType, int index)
+        {
             var player = _playerPresenters[playerType];
 
-            if (_shootingData.ShootingPositions == null || _shootingData.ShootingPositions.Length == 0)
+            if (_shootingData.PlayerShootingPositions == null || _shootingData.PlayerShootingPositions.Length == 0)
             {
                 Debug.LogWarning("ShootingPositionManager: No shooting positions available.");
                 return;
             }
-            int randomIndex = UnityEngine.Random.Range(0, _shootingData.ShootingPositions.Length);
             player.GetBall().ResetBall();
-            player.MoveToPosition(_shootingData.ShootingPositions[randomIndex]);
+
+            switch (playerType)
+            {
+                case PlayerTypeEnum.Player:
+                    player.MoveToPosition(_shootingData.PlayerShootingPositions[index]);
+                    break;
+                case PlayerTypeEnum.NPC:
+                default:
+                    player.MoveToPosition(_shootingData.NPCShootingPositions[index]);
+                    break;
+            }
         }
 
         protected override void OnDestroying()
