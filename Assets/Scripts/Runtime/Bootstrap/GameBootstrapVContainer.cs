@@ -8,6 +8,7 @@ using Assets.Scripts.Runtime.Managers;
 using Assets.Scripts.Runtime.Managers.States.MainGame;
 using Assets.Scripts.Runtime.ScriptableObjects;
 using Assets.Scripts.Runtime.ScriptableObjects.InputSystem;
+using Assets.Scripts.Runtime.Shared.Constants;
 using Assets.Scripts.Runtime.Shared.EventBus;
 using Assets.Scripts.Runtime.Shared.Interfaces;
 using Assets.Scripts.Runtime.Shared.Interfaces.Data;
@@ -41,6 +42,9 @@ namespace Assets.Scripts.Runtime.Bootstrap
         [SerializeField] private SO_NpcConfigData _npcConfigData;
         [SerializeField] private PlayerCreationalData[] _playerCreationDataArray;
 
+        [SerializeField] private AudioSource _musicAudioSource;
+        [SerializeField] private AudioSource _sfxAudioSource;
+
         protected override void Configure(IContainerBuilder builder)
         {
             // Scriptable Objects
@@ -60,6 +64,9 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.RegisterInstance(_fireballData).As<IFireballData>();
                 builder.RegisterInstance(_npcConfigData).As<INpcConfigData>();
 
+                builder.RegisterInstance(_musicAudioSource).Keyed(GameConstants.VContainer_MusicAudioSourceKey);
+                builder.RegisterInstance(_sfxAudioSource).Keyed(GameConstants.VContainer_SFXAudioSourceKey);
+
             // Camera
                 builder.RegisterComponentInHierarchy<CameraController>().As<ICameraController>();
 
@@ -76,6 +83,7 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.Register<BackboardBonusManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<GameplayInputManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<NpcManager>(Lifetime.Singleton).AsImplementedInterfaces();
+                builder.Register<SoundManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<GameStatesManager>(Lifetime.Singleton).As<IGameStateManager>();
 
             // Factories
