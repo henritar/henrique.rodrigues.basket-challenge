@@ -7,11 +7,16 @@ namespace Assets.Scripts.Runtime.UI.GameplayUI
 {
     public class GameplayUIView : BaseUIView, IGameplayUIView
     {
-        [SerializeField] private TextMeshProUGUI scoreText;
+        [SerializeField] private TextMeshProUGUI _playerScoreText;
+        [SerializeField] private TextMeshProUGUI _npcScoreText;
 
-        public void UpdateScore(int score)
+        public void UpdatePlayerScore(int score)
         {
-            scoreText.text = score.ToString();
+            _playerScoreText.text = score.ToString();        
+        }
+        public void UpdateNpcScore(int score)
+        {
+            _npcScoreText.text = score.ToString();
         }
     }
 }

@@ -36,8 +36,12 @@ namespace Assets.Scripts.Runtime.UI.GameplayUI
 
             Model.IsUIVisible.Subscribe(OnUIVisibleChanged).AddTo(_disposables);
 
-            Model.CurrentPoints
-                .Subscribe(points => View.UpdateScore(points))
+            Model.PlayerCurrentPoints
+                .Subscribe(points => View.UpdatePlayerScore(points))
+                .AddTo(_disposables);
+
+            Model.NpcCurrentPoints
+                .Subscribe(points => View.UpdateNpcScore(points))
                 .AddTo(_disposables);
         }
 
@@ -47,7 +51,16 @@ namespace Assets.Scripts.Runtime.UI.GameplayUI
 
         private void OnUpdateScore(UpdateScoreEvent scoreEvent)
         {
-            Model.UpdatePoints(scoreEvent.Points);
+            switch (scoreEvent.PlayerType)
+            {
+                case Enums.PlayerTypeEnum.Player:
+                    Model.UpdatePlayerPoints(scoreEvent.Points);
+                    break;
+                case Enums.PlayerTypeEnum.NPC:
+                default:
+                    Model.UpdateNpcPoints(scoreEvent.Points);
+                    break;
+            }
         }
 
         private void OnUIVisibleChanged(bool visible)

@@ -30,7 +30,8 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
         {
             Debug.Log("Entering Reward Game State");
             _rewardMenuPresenter.ShowUI(true);
-            _rewardMenuPresenter.SetFinalScore(_goalManager.CurrentScore);
+            _rewardMenuPresenter.SetPlayerFinalScore(_goalManager.PlayerCurrentScore);
+            _rewardMenuPresenter.SetNpcFinalScore(_goalManager.NpcCurrentScore);
         }
 
         protected override void OnExitState()

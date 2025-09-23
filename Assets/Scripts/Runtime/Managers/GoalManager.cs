@@ -16,14 +16,17 @@ namespace Assets.Scripts.Runtime.Managers
         private readonly IFireballBarController _fireballBarController;
         private readonly IEventBus _eventBus;
         private CompositeDisposable _disposables;
-        private ReactiveProperty<int> _currentScore;
+        private ReactiveProperty<int> _playerCurrentScore;
+        private ReactiveProperty<int> _npcCurrentScore;
         private ReactiveProperty<int> _fireballStreak;
         private bool _goal;
 
         private BonusTypeEnum _currentBonus = BonusTypeEnum.None;
-        private ShotResultEnum _shotResult = ShotResultEnum.MissWeak;
+        private ShotResultEnum _playerShotResult = ShotResultEnum.MissWeak;
+        private ShotResultEnum _npcShotResult = ShotResultEnum.MissWeak;
 
-        public int CurrentScore => _currentScore.Value;
+        public int PlayerCurrentScore => _playerCurrentScore.Value;
+        public int NpcCurrentScore => _npcCurrentScore.Value;
         public int FireballThreshold => _fireballData.FireballThreshold;
         public int FireballStreak => _fireballStreak.Value;
 
@@ -45,7 +48,8 @@ namespace Assets.Scripts.Runtime.Managers
             }
 
             _disposables = new();
-            _currentScore = new();
+            _playerCurrentScore = new();
+            _npcCurrentScore = new();
             _fireballStreak = new();
 
             _eventBus.OnEvent<GoalEvent>().Subscribe(OnGoalScored)
@@ -54,7 +58,8 @@ namespace Assets.Scripts.Runtime.Managers
             _eventBus.OnEvent<UpdateBonusEvent>().Subscribe(OnNewBonus).AddTo(_disposables);
             _eventBus.OnEvent<GameStartEvent>().Subscribe(OnGameStart).AddTo(_disposables);
 
-            _currentScore.Subscribe(OnUpdateScore).AddTo(_disposables);
+            _playerCurrentScore.Subscribe(points => OnUpdateScore(points, PlayerTypeEnum.Player)).AddTo(_disposables);
+            _npcCurrentScore.Subscribe(points => OnUpdateScore(points, PlayerTypeEnum.NPC)).AddTo(_disposables);
             _fireballStreak.Subscribe(OnUpdateFireballStreak).AddTo(_disposables);
 
             _isInitialized = true;
@@ -67,20 +72,17 @@ namespace Assets.Scripts.Runtime.Managers
 
         private void OnGoalScored(GoalEvent goalEvent)
         {
-            if (goalEvent.PlayerType == PlayerTypeEnum.NPC)
-            {
-                return;
-            }
-
-            _goal = true;
             int points = 0;
-            if (_currentBonus != BonusTypeEnum.None && _shotResult == ShotResultEnum.BackboardBasket)
+
+            var shotResult = goalEvent.PlayerType == PlayerTypeEnum.Player ? _playerShotResult : _npcShotResult;
+
+            if (_currentBonus != BonusTypeEnum.None && shotResult == ShotResultEnum.BackboardBasket)
             {
                 points = (int)_currentBonus;
             }
             else
             {
-                points = _shotResult switch
+                points = shotResult switch
                 {
                     ShotResultEnum.PerfectShot => 3,
                     ShotResultEnum.RingTouch or ShotResultEnum.BackboardBasket => 2,
@@ -88,25 +90,32 @@ namespace Assets.Scripts.Runtime.Managers
                 };
             }
 
-            bool shouldDoubleScore = _fireballStreak.Value >= GameConstants.FireballStreakThreshold;
-            points *= shouldDoubleScore ? 2 : 1;
-            _currentScore.Value += points;
-
-            _fireballStreak.Value += points > 0 ? 1 : 0;
-
-            Debug.Log($"Goal scored! Points: {points}");
+            
+            if (goalEvent.PlayerType == PlayerTypeEnum.Player)
+            {
+                _goal = true;
+                bool shouldDoubleScore = _fireballStreak.Value >= GameConstants.FireballStreakThreshold;
+                points *= shouldDoubleScore ? 2 : 1;
+                _playerCurrentScore.Value += points;
+                _fireballStreak.Value += points > 0 ? 1 : 0;
+            }
+            else
+            {
+                _npcCurrentScore.Value += points;
+            }
         }
 
         private void OnGameStart(GameStartEvent gameStartEvent)
         {
-            _currentScore.Value = 0;
+            _playerCurrentScore.Value = 0;
+            _npcCurrentScore.Value = 0;
             _fireballStreak.Value = 0;
             _goal = false;
         }
 
-        private void OnUpdateScore(int newScore)
+        private void OnUpdateScore(int newScore, PlayerTypeEnum playerType)
         {
-            _eventBus.Publish(new UpdateScoreEvent(newScore));
+            _eventBus.Publish(new UpdateScoreEvent(newScore, playerType));
         }
 
         private void OnUpdateFireballStreak(int newFireballStreak)
@@ -118,10 +127,11 @@ namespace Assets.Scripts.Runtime.Managers
         {
             if (shotEvent.BallPresenter.BallPlayerType == PlayerTypeEnum.NPC)
             {
+                _npcShotResult = shotEvent.ShotResult;
                 return;
             }
 
-            _shotResult = shotEvent.ShotResult;
+            _playerShotResult = shotEvent.ShotResult;
 
             _ballDisposable = new();
             shotEvent.BallPresenter.OnBallReset.Subscribe(OnBallReset).AddTo(_ballDisposable);
@@ -129,12 +139,13 @@ namespace Assets.Scripts.Runtime.Managers
             void OnBallReset(Unit unit)
             {
                 _ballDisposable.Dispose();
-                if (!_goal && (_shotResult == ShotResultEnum.MissWeak ||
-                                _shotResult == ShotResultEnum.MissStrong ||
-                                _shotResult == ShotResultEnum.RingTouch))
+                if (!_goal && (_playerShotResult == ShotResultEnum.MissWeak ||
+                                _playerShotResult == ShotResultEnum.MissStrong ||
+                                _playerShotResult == ShotResultEnum.RingTouch))
                 {
                     _fireballStreak.Value = 0;
                 }
+
                 _goal = false;
             }
         }

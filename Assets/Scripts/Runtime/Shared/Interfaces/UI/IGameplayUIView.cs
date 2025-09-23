@@ -4,6 +4,7 @@ namespace Assets.Scripts.Runtime.Shared.Interfaces.UI
 {
     public interface IGameplayUIView : IBaseView
     {
-        void UpdateScore(int score);
+        void UpdatePlayerScore(int score);
+        void UpdateNpcScore(int score);
     }
 }

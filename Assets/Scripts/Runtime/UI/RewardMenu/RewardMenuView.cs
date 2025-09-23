@@ -9,13 +9,19 @@ namespace Assets.Scripts.Runtime.UI.RewardMenu
 {
     public class RewardMenuView : BaseUIView, IRewardMenuView
     {
-        [SerializeField] private TextMeshProUGUI _finalScoreText;
+        [SerializeField] private TextMeshProUGUI _playerFinalScoreText;
+        [SerializeField] private TextMeshProUGUI _npcFinalScoreText;
         [SerializeField] private Button _playAgainBtn;
         [SerializeField] private Button _mainMenuBtn;
 
-        public void SetFinalScore(int finalScore)
+        public void SetPlayerFinalScore(int finalScore)
         {
-            _finalScoreText.text = finalScore.ToString();
+            _playerFinalScoreText.text = finalScore.ToString();
+        }
+
+        public void SetNpcFinalScore(int finalScore)
+        {
+            _npcFinalScoreText.text = finalScore.ToString();
         }
 
         public void SetPlayAgainAction(UnityAction action)

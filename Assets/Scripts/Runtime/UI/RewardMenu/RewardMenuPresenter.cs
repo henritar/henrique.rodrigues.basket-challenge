@@ -28,16 +28,21 @@ namespace Assets.Scripts.Runtime.UI.RewardMenu
             View.SetPlayAgainAction(action);
         }
 
-        public void SetFinalScore(int finalScore)
+        public void SetPlayerFinalScore(int finalScore)
         {
-            Model.SetFinalScore(finalScore);
+            Model.SetPlayerFinalScore(finalScore);
+        }
+        public void SetNpcFinalScore(int finalScore)
+        {
+            Model.SetNpcFinalScore(finalScore);
         }
 
         protected override void SubscribeToEvents()
         {
 
             Model.IsUIVisible.Subscribe(OnUIVisibleChanged).AddTo(_disposables);
-            Model.FinalScore.Subscribe(View.SetFinalScore).AddTo(_disposables);
+            Model.PlayerFinalScore.Subscribe(View.SetPlayerFinalScore).AddTo(_disposables);
+            Model.NpcFinalScore.Subscribe(View.SetNpcFinalScore).AddTo(_disposables);
         }
 
         protected override void UnsubscribeFromEvents()
@@ -62,5 +67,6 @@ namespace Assets.Scripts.Runtime.UI.RewardMenu
             _disposables.Dispose();
             _disposables = null;
         }
+
     }
 }

@@ -5,9 +5,11 @@ namespace Assets.Scripts.Runtime.Shared.Interfaces.UI
 {
     public interface IGameplayUIModel : IBaseModel
     {
-        IReadOnlyReactiveProperty<int> CurrentPoints { get; }
+        IReadOnlyReactiveProperty<int> PlayerCurrentPoints { get; }
+        IReadOnlyReactiveProperty<int> NpcCurrentPoints { get; }
         IReadOnlyReactiveProperty<bool> IsUIVisible { get; }
-        void UpdatePoints(int points);
+        void UpdatePlayerPoints(int points);
+        void UpdateNpcPoints(int points);
         void SetUIVisible(bool visible);
 
     }

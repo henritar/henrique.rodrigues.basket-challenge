@@ -6,8 +6,10 @@ namespace Assets.Scripts.Runtime.Shared.Interfaces.UI
     public interface IRewardMenuModel : IBaseModel
     {
         IReadOnlyReactiveProperty<bool> IsUIVisible { get; }
-        IReadOnlyReactiveProperty<int> FinalScore { get; }
+        IReadOnlyReactiveProperty<int> PlayerFinalScore { get; }
+        IReadOnlyReactiveProperty<int> NpcFinalScore { get; }
         void SetUIVisible(bool visible);
-        void SetFinalScore(int finalScore);
+        void SetPlayerFinalScore(int finalScore);
+        void SetNpcFinalScore(int finalScore);
     }
 }

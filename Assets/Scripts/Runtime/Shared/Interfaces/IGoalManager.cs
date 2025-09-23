@@ -4,7 +4,8 @@ namespace Assets.Scripts.Runtime.Shared.Interfaces
 {
     public interface IGoalManager : IBaseManager
     {
-        int CurrentScore { get; }
+        int PlayerCurrentScore { get; }
+        int NpcCurrentScore { get; }
         int FireballThreshold { get; }
         int FireballStreak {  get; }
 

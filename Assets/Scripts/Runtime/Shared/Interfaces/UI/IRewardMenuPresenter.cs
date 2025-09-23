@@ -8,6 +8,7 @@ namespace Assets.Scripts.Runtime.Shared.Interfaces.UI
         void SetPlayAgainAction(UnityAction action);
         void SetMainMenuAction(UnityAction action);
         void ShowUI(bool show);
-        void SetFinalScore(int finalScore);
+        void SetPlayerFinalScore(int finalScore);
+        void SetNpcFinalScore(int finalScore);
     }
 }
