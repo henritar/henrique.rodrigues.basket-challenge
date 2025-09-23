@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93eb4b90c39a55648b976df741f12b0d, type: 3}
+  m_Name: DefaultNpcConfigData
+  m_EditorClassIdentifier: 
+  npcDificultyConfigs:
+  - NpcDifficultyEnum: 0
+    PerfectShotChance: 20
+    RingShotChance: 20
+    BackboardShotChance: 20
+    MissShotWeakChance: 20
+    MissShotStrongChance: 20
+    ShotInterval: 3
+  - NpcDifficultyEnum: 1
+    PerfectShotChance: 30
+    RingShotChance: 30
+    BackboardShotChance: 20
+    MissShotWeakChance: 10
+    MissShotStrongChance: 10
+    ShotInterval: 3
+  - NpcDifficultyEnum: 2
+    PerfectShotChance: 40
+    RingShotChance: 20
+    BackboardShotChance: 30
+    MissShotWeakChance: 5
+    MissShotStrongChance: 5
+    ShotInterval: 3

@@ -1,7 +1,6 @@
 ﻿using Assets.Scripts.Runtime.Shared;
 using Assets.Scripts.Runtime.Shared.EventBus.Events;
 using Assets.Scripts.Runtime.Shared.Interfaces;
-using Assets.Scripts.Runtime.Shared.Interfaces.Data;
 using Assets.Scripts.Runtime.Shared.Interfaces.Factories.Player;
 using Assets.Scripts.Runtime.Shared.Interfaces.Interactables;
 using Cysharp.Threading.Tasks;
@@ -14,11 +13,11 @@ namespace Assets.Scripts.Runtime.Managers
 {
     public class NpcManager : BaseManager, INpcManager
     {
-        private readonly INpcConfigData _npcConfigData;
         private readonly IPlayerFactory _playerFactory;
         private readonly IEventBus _eventBus;
 
         private IPlayerPresenter _npcPresenter;
+        private NpcDifficultyConfig _npcConfigData;
 
         private CompositeDisposable _disposables;
         private CancellationTokenSource _cts;
@@ -29,9 +28,8 @@ namespace Assets.Scripts.Runtime.Managers
         private float _missShotStrongChance;
         private float _missShotWeakChance;
 
-        public NpcManager(INpcConfigData npcConfigData, IPlayerFactory playerFactory, IEventBus eventBus)
+        public NpcManager(IPlayerFactory playerFactory, IEventBus eventBus)
         {
-            _npcConfigData = npcConfigData;
             _playerFactory = playerFactory;
             _eventBus = eventBus;
         }
@@ -46,8 +44,6 @@ namespace Assets.Scripts.Runtime.Managers
 
             _disposables = new();
 
-            NormalizeShotProbabilities();
-
             _eventBus.OnEvent<GameStartEvent>().Subscribe(StartNPC)
             .AddTo(_disposables);
             _eventBus.OnEvent<TimerEndedEvent>().Subscribe(StopNPC)
@@ -56,6 +52,12 @@ namespace Assets.Scripts.Runtime.Managers
             _npcPresenter = _playerFactory.Create(Enums.PlayerTypeEnum.NPC);
 
             _isInitialized = true;
+        }
+
+        public void SetDifficultConfig(NpcDifficultyConfig config)
+        {
+            _npcConfigData = config;
+            NormalizeShotProbabilities();
         }
 
         private void StartNPC(GameStartEvent gameStartEvent)
@@ -121,13 +123,11 @@ namespace Assets.Scripts.Runtime.Managers
 
         private void NormalizeShotProbabilities()
         {
-            var difficultyConfig = _npcConfigData.NpcDificultyConfigs[0];
-
-            float perfect = difficultyConfig.PerfectShotChance;
-            float backboard = difficultyConfig.BackboardShotChance;
-            float ring = difficultyConfig.RingShotChance;
-            float missStrong = difficultyConfig.MissShotStrongChance;
-            float missWeak = difficultyConfig.MissShotWeakChance;
+            float perfect = _npcConfigData.PerfectShotChance;
+            float backboard = _npcConfigData.BackboardShotChance;
+            float ring = _npcConfigData.RingShotChance;
+            float missStrong = _npcConfigData.MissShotStrongChance;
+            float missWeak = _npcConfigData.MissShotWeakChance;
 
             float total = perfect + backboard + ring + missStrong + missWeak;
 

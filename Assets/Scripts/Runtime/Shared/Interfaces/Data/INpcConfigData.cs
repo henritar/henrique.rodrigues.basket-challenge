@@ -2,7 +2,6 @@
 {
     public interface INpcConfigData
     {
-        public float ShotInterval { get; }
-        public NpcDificultyConfig[] NpcDificultyConfigs { get; }
+        public NpcDifficultyConfig[] NpcDifficultyConfigs { get; }
     }
 }

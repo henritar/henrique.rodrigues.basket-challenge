@@ -7,19 +7,17 @@ namespace Assets.Scripts.Runtime.ScriptableObjects
     [CreateAssetMenu(fileName = "New NpcConfigData", menuName = "Scriptable Objects/Data/NpcConfigData", order = 5)]
     public class SO_NpcConfigData : ScriptableObject, INpcConfigData
     {
-        [SerializeField] private float _shotInterval = 3f;
-        [SerializeField] private NpcDificultyConfig[] npcDificultyConfigs = new NpcDificultyConfig[] 
+        [SerializeField] private NpcDifficultyConfig[] npcDificultyConfigs = new NpcDifficultyConfig[] 
         {
-            new NpcDificultyConfig { 
-                NpcDificultyEnum = Enums.NpcDificultyEnum.easy,
+            new NpcDifficultyConfig { 
+                NpcDifficultyEnum = Enums.NpcDifficultyEnum.easy,
                 PerfectShotChance = 0.2f,
                 BackboardShotChance = 0.2f,
                 RingShotChance = 0.2f,
                 MissShotStrongChance = 0.2f,
-                MissShotWeakChance = 0.2f } 
+                MissShotWeakChance = 0.2f,
+                ShotInterval = 3f } 
         };
-
-        public float ShotInterval => _shotInterval;
-        public NpcDificultyConfig[] NpcDificultyConfigs => npcDificultyConfigs;
+        public NpcDifficultyConfig[] NpcDifficultyConfigs => npcDificultyConfigs;
     }
 }

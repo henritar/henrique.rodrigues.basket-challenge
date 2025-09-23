@@ -18,6 +18,7 @@ using Assets.Scripts.Runtime.Shared.Interfaces.Interactables;
 using Assets.Scripts.Runtime.Shared.Interfaces.StateMachine;
 using Assets.Scripts.Runtime.Shared.Interfaces.UI;
 using Assets.Scripts.Runtime.UI.BackboardBonusUI;
+using Assets.Scripts.Runtime.UI.DificultyMenu;
 using Assets.Scripts.Runtime.UI.GameplayUI;
 using Assets.Scripts.Runtime.UI.MainMenu;
 using Assets.Scripts.Runtime.UI.RewardMenu;
@@ -119,6 +120,10 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.RegisterComponentInHierarchy<TimerUIView>().As<ITimerUIView>();
                 builder.Register<TimerUIModel>(Lifetime.Singleton).As<ITimerUIModel>();
                 builder.Register<TimerUIPresenter>(Lifetime.Singleton).AsImplementedInterfaces();
+
+                builder.RegisterComponentInHierarchy<DifficultyMenuView>().As<IDifficultyMenuView>();
+                builder.Register<DifficultyMenuModel>(Lifetime.Singleton).As<IDifficultyMenuModel>();
+                builder.Register<DifficultyMenuPresenter>(Lifetime.Singleton).AsImplementedInterfaces();
 
                 builder.RegisterComponentInHierarchy<InputBarController>().As<IInputBarController>();
                 builder.RegisterComponentInHierarchy<FireballBarController>().As<IFireballBarController>();

@@ -2,5 +2,6 @@
 {
     public interface INpcManager : IBaseManager
     {
+        void SetDifficultConfig(NpcDifficultyConfig config);
     }
 }

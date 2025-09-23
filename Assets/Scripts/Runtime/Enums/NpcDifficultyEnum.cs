@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Runtime.Enums
 {
-    public enum NpcDificultyEnum
+    public enum NpcDifficultyEnum
     {
         easy,
         normal,

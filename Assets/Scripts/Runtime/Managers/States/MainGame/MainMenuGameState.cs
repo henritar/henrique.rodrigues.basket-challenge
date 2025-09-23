@@ -11,11 +11,13 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
 
         private readonly IMainMenuPresenter _mainMenuPresenter;
         private readonly ITimerMenuPresenter _timerMenuPresenter;
+        private readonly IDifficultyMenuPresenter _difficultyMenuPresenter;
 
-        public MainMenuGameState(IMainMenuPresenter mainMenuPresenter, ITimerMenuPresenter timerMenuPresenter)
+        public MainMenuGameState(IMainMenuPresenter mainMenuPresenter, ITimerMenuPresenter timerMenuPresenter, IDifficultyMenuPresenter difficultyMenuPresenter)
         {
             _mainMenuPresenter = mainMenuPresenter;
             _timerMenuPresenter = timerMenuPresenter;
+            _difficultyMenuPresenter = difficultyMenuPresenter;
             _mainMenuPresenter.SetStartGameAction(() =>
             {
                 _stateManager.ChangeState(GameStatesEnum.Playing);
@@ -27,12 +29,14 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
             Debug.Log("Entering MainMenu Game State");
             _mainMenuPresenter.ShowUI(true);
             _timerMenuPresenter.ShowUI(true);
+            _difficultyMenuPresenter.ShowUI(true);
         }
 
         protected override void OnExitState()
         {
             _mainMenuPresenter.ShowUI(false);
             _timerMenuPresenter.ShowUI(false);
+            _difficultyMenuPresenter.ShowUI(false);
             Debug.Log("Exiting MainMenu Game State");
         }
 
