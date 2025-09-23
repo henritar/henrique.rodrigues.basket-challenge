@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts.Runtime.Shared.Interfaces
 {
-    public interface IGoalManager
+    public interface IGoalManager : IBaseManager
     {
         int CurrentScore { get; }
         int FireballThreshold { get; }

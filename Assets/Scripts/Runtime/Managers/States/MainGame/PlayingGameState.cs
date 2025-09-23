@@ -121,6 +121,7 @@ namespace Assets.Scripts.Runtime.Managers.States.MainGame
 
             if (timer <= 0)
             {
+                _eventBus.Publish(new TimerEndedEvent());
                 _stateManager.ChangeState(GameStatesEnum.Reward);
             }
         }

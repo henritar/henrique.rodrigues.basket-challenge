@@ -15,14 +15,14 @@ namespace Assets.Scripts.Runtime.Gameplay.Interactables
         {
             if (other.CompareTag("Basketball"))
             {
-                var ballPresenter = other.GetComponent<IBallView>();
+                var ballView = other.GetComponent<IBallView>();
 
-                if (ballPresenter == null)
+                if (ballView == null)
                 {
                     return;
                 }
 
-                _eventBus.Publish(new GoalEvent(ballPresenter.BallPlayerType));
+                _eventBus.Publish(new GoalEvent(ballView.BallPlayerType));
             }
         }
     }

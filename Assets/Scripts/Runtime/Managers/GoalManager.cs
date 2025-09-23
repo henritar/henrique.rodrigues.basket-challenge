@@ -67,6 +67,11 @@ namespace Assets.Scripts.Runtime.Managers
 
         private void OnGoalScored(GoalEvent goalEvent)
         {
+            if (goalEvent.PlayerType == PlayerTypeEnum.NPC)
+            {
+                return;
+            }
+
             _goal = true;
             int points = 0;
             if (_currentBonus != BonusTypeEnum.None && _shotResult == ShotResultEnum.BackboardBasket)
@@ -111,6 +116,11 @@ namespace Assets.Scripts.Runtime.Managers
 
         private void OnShotMade(ShotEvent shotEvent)
         {
+            if (shotEvent.BallPresenter.BallPlayerType == PlayerTypeEnum.NPC)
+            {
+                return;
+            }
+
             _shotResult = shotEvent.ShotResult;
 
             _ballDisposable = new();

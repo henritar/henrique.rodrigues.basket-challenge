@@ -71,6 +71,7 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.Register<ShootingPositionManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<BackboardBonusManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<GameplayInputManager>(Lifetime.Singleton).AsImplementedInterfaces();
+                builder.Register<NpcManager>(Lifetime.Singleton).AsImplementedInterfaces();
                 builder.Register<GameStatesManager>(Lifetime.Singleton).As<IGameStateManager>();
 
             // Factories
