@@ -3,7 +3,6 @@ using Assets.Scripts.Runtime.Shared;
 using Assets.Scripts.Runtime.Shared.EventBus.Events;
 using Assets.Scripts.Runtime.Shared.Interfaces;
 using Assets.Scripts.Runtime.Shared.Interfaces.Data;
-using Assets.Scripts.Runtime.Shared.Interfaces.UI;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;

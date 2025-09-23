@@ -37,6 +37,7 @@ namespace Assets.Scripts.Runtime.Bootstrap
         [SerializeField] private SO_TimerData _timerData;
         [SerializeField] private SO_ShotResultData _shotResultData;
         [SerializeField] private SO_FireballData _fireballData;
+        [SerializeField] private SO_NpcConfigData _npcConfigData;
         [SerializeField] private PlayerCreationalData[] _playerCreationDataArray;
 
         protected override void Configure(IContainerBuilder builder)
@@ -48,6 +49,7 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 _timerData ??= ScriptableObject.CreateInstance<SO_TimerData>();
                 _shotResultData  ??= ScriptableObject.CreateInstance<SO_ShotResultData>();
                 _fireballData ??= ScriptableObject.CreateInstance<SO_FireballData>();
+                _npcConfigData ??= ScriptableObject.CreateInstance<SO_NpcConfigData>();
 
                 builder.RegisterInstance(_gameplayInputReader).As<IGameplayInputReader>();
                 builder.RegisterInstance(_shootingPositionData).As<IShootingPositionData>();
@@ -55,6 +57,7 @@ namespace Assets.Scripts.Runtime.Bootstrap
                 builder.RegisterInstance(_timerData).As<ITimerData>();
                 builder.RegisterInstance(_shotResultData).As<IShotResultData>();
                 builder.RegisterInstance(_fireballData).As<IFireballData>();
+                builder.RegisterInstance(_npcConfigData).As<INpcConfigData>();
 
             // Camera
                 builder.RegisterComponentInHierarchy<CameraController>().As<ICameraController>();

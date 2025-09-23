@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Runtime.ScriptableObjects
 {
-    [CreateAssetMenu(fileName = "New Shooting Position Data", menuName = "Scriptable Objects/Data/ShootingPositionData")]
+    [CreateAssetMenu(fileName = "New ShootingPositionData", menuName = "Scriptable Objects/Data/ShootingPositionData", order = 4)]
     public class SO_ShootingPositionData : ScriptableObject, IShootingPositionData
     {
         [SerializeField] private Vector3[] _playerShootingPositionArray = new Vector3[] {new Vector3(0,0,GameConstants.MinFreeThrowLineDistance) };

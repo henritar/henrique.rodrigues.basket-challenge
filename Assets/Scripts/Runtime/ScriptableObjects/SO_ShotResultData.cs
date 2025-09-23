@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Runtime.ScriptableObjects
 {
-    [CreateAssetMenu(fileName = "New ShotResultData", menuName = "Scriptable Objects/Data/ShotResultData", order = 5)]
+    [CreateAssetMenu(fileName = "New ShotResultData", menuName = "Scriptable Objects/Data/ShotResultData", order = 1)]
     public class SO_ShotResultData : ScriptableObject, IShotResultData
     {
         [SerializeField] private ShotResultRange[] _shotResultRanges = new ShotResultRange[] 
