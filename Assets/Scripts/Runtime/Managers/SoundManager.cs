@@ -39,11 +39,13 @@ namespace Assets.Scripts.Runtime.Managers
             LoadSounds();
 
             _eventBus.OnEvent<GoalEvent>().Subscribe(_ => PlaySound(GameConstants.NetSound)).AddTo(_disposables);
+            _eventBus.OnEvent<ShotEvent>().Subscribe(_ => PlaySound(GameConstants.ThrowSound)).AddTo(_disposables);
             _eventBus.OnEvent<TimerEndedEvent>().Subscribe(_ => PlaySound(GameConstants.BuzzerGameOverSound)).AddTo(_disposables);
             _eventBus.OnEvent<GameStartEvent>().Subscribe(_ => PlaySound(GameConstants.RefereeWhistleSound)).AddTo(_disposables);
             _eventBus.OnEvent<BackboardHitEvent>().Subscribe(_ => PlaySound(GameConstants.BackbordSound)).AddTo(_disposables);
         }
 
+        [Preserve]
         private void LoadSounds()
         {
             AudioClip[] clips = Resources.LoadAll<AudioClip>("Sounds/");

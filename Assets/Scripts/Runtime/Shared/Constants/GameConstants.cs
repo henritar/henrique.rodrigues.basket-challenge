@@ -20,6 +20,7 @@ namespace Assets.Scripts.Runtime.Shared.Constants
         public readonly static Vector3 BallOffset = new Vector3(0.15f, 1.6f, 0.3f);
 
         public readonly static string NetSound = "basketball-net";
+        public readonly static string ThrowSound = "basketball-throw";
         public readonly static string BackbordSound = "basketball-backboard";
         public readonly static string AmbientSound = "basketball-ambient";
         public readonly static string BuzzerGameOverSound = "basketball-buzzer-game-over";
