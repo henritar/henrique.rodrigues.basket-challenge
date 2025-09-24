@@ -40,9 +40,9 @@ namespace Assets.Scripts.Runtime.Managers
 
             _eventBus.OnEvent<GoalEvent>().Subscribe(_ => PlaySound(GameConstants.NetSound)).AddTo(_disposables);
             _eventBus.OnEvent<ShotEvent>().Subscribe(_ => PlaySound(GameConstants.ThrowSound)).AddTo(_disposables);
-            _eventBus.OnEvent<TimerEndedEvent>().Subscribe(_ => PlaySound(GameConstants.BuzzerGameOverSound)).AddTo(_disposables);
-            _eventBus.OnEvent<GameStartEvent>().Subscribe(_ => PlaySound(GameConstants.RefereeWhistleSound)).AddTo(_disposables);
             _eventBus.OnEvent<BackboardHitEvent>().Subscribe(_ => PlaySound(GameConstants.BackbordSound)).AddTo(_disposables);
+            _eventBus.OnEvent<GameStartEvent>().Subscribe(OnGameStart).AddTo(_disposables);
+            _eventBus.OnEvent<TimerEndedEvent>().Subscribe(OnTimerEnded).AddTo(_disposables);
         }
 
         [Preserve]
@@ -90,7 +90,22 @@ namespace Assets.Scripts.Runtime.Managers
 
         protected override void OnStart()
         {
+            SetMusicVolume(GameConstants.AmbientVolume);
             PlayMusic(GameConstants.AmbientSound);
+        }
+
+        private void OnGameStart(GameStartEvent gameStartEvent)
+        {
+            SetMusicVolume(GameConstants.MusicVolume);
+            PlaySound(GameConstants.RefereeWhistleSound);
+            PlayMusic(GameConstants.MusicSound);
+        }
+
+        private void OnTimerEnded(TimerEndedEvent timerEndedEvent)
+        {
+            SetMusicVolume(GameConstants.AmbientVolume);
+            PlayMusic(GameConstants.AmbientSound);
+            PlaySound(GameConstants.BuzzerGameOverSound);
         }
 
         protected override void OnDestroying()

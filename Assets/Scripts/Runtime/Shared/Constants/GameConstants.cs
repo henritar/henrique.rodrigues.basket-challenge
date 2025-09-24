@@ -19,6 +19,9 @@ namespace Assets.Scripts.Runtime.Shared.Constants
         public const float MaxAngularVelocity = 12.0f;
         public readonly static Vector3 BallOffset = new Vector3(0.15f, 1.6f, 0.3f);
 
+        public readonly static float AmbientVolume = 1.0f;
+        public readonly static float MusicVolume = 0.4f;
+        public readonly static string MusicSound = "basketball-music";
         public readonly static string NetSound = "basketball-net";
         public readonly static string ThrowSound = "basketball-throw";
         public readonly static string BackbordSound = "basketball-backboard";
